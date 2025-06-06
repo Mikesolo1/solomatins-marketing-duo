@@ -1,8 +1,8 @@
 
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Users, Target, ArrowRight, Star, CheckCircle } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
