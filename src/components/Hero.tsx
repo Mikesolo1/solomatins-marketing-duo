@@ -1,8 +1,28 @@
 
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Users, Target } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, Users, Target, ArrowRight, Star, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+  const [currentStat, setCurrentStat] = useState(0);
+  
+  const stats = [
+    { value: "300%", label: "Рост трафика", icon: TrendingUp },
+    { value: "85%", label: "Конверсия в лиды", icon: Target },
+    { value: "16+", label: "Лет экспертизы", icon: Star },
+    { value: "50+", label: "Успешных проектов", icon: Users }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStat((prev) => (prev + 1) % stats.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const scrollToContact = () => {
     const element = document.getElementById('contact');
     if (element) {
@@ -11,75 +31,128 @@ const Hero = () => {
   };
 
   return (
-    <section className="pt-24 pb-16 bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen flex items-center">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Ваш маркетинговый отдел{" "}
-            <span className="text-orange-500">под ключ</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-            Бутиковая студия интернет-маркетинга для e-com, медицины и сферы услуг
-          </p>
+    <section className="relative pt-20 pb-16 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-orange-50/30 overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-orange-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-green-400/5 to-blue-400/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      </div>
 
-          <div className="bg-white rounded-lg p-6 md:p-8 shadow-lg mb-10 text-left max-w-3xl mx-auto">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-              Мы не агентство и не фрилансеры — мы ваш личный маркетинг-партнёр
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="flex items-start space-x-3">
-                <TrendingUp className="text-orange-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">SEO на долгосрок</h3>
-                  <p className="text-gray-600 text-sm">Системный рост трафика и позиций</p>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          {/* Trust badges */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <Badge variant="secondary" className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm">
+              <CheckCircle className="w-3 h-3 mr-1 text-green-600" />
+              16+ лет на рынке
+            </Badge>
+            <Badge variant="secondary" className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm">
+              <CheckCircle className="w-3 h-3 mr-1 text-green-600" />
+              Семейный бизнес
+            </Badge>
+            <Badge variant="secondary" className="bg-white/80 text-gray-700 border border-gray-200 shadow-sm">
+              <CheckCircle className="w-3 h-3 mr-1 text-green-600" />
+              Работаем лично
+            </Badge>
+          </div>
+
+          {/* Main headline */}
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+              Ваш маркетинг{" "}
+              <span className="bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                под ключ
+              </span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
+              Бутиковая студия интернет-маркетинга для e-com, медицины и сферы услуг.<br />
+              <span className="font-semibold text-gray-800">Системный рост за счёт трафика и повторных продаж</span>
+            </p>
+
+            {/* Animated stats */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-gray-200/50 mb-10 max-w-md mx-auto">
+              <div className="text-center transition-all duration-500 ease-in-out">
+                <div className="flex justify-center mb-2">
+                  {React.createElement(stats[currentStat].icon, { 
+                    className: "text-orange-500 w-8 h-8" 
+                  })}
                 </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Users className="text-orange-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">CRM-маркетинг</h3>
-                  <p className="text-gray-600 text-sm">Повторные продажи и увеличение LTV</p>
+                <div className="text-3xl font-bold text-gray-900 mb-1">
+                  {stats[currentStat].value}
                 </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Target className="text-orange-500 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Стратегия</h3>
-                  <p className="text-gray-600 text-sm">Результат, а не отчёты</p>
+                <div className="text-sm text-gray-600">
+                  {stats[currentStat].label}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* Value proposition cards */}
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-4">
+                  <TrendingUp className="text-white" size={24} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">SEO на долгосрок</h3>
+              </div>
+              <p className="text-gray-600">Системный рост позиций и органического трафика без черных методов</p>
+            </div>
+
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-4">
+                  <Users className="text-white" size={24} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">CRM-маркетинг</h3>
+              </div>
+              <p className="text-gray-600">Повторные продажи и увеличение LTV через автоматизированные воронки</p>
+            </div>
+
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-4">
+                  <Target className="text-white" size={24} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900">Стратегия роста</h3>
+              </div>
+              <p className="text-gray-600">Результат, а не отчёты. Маркетинг как система, а не набор инструментов</p>
+            </div>
+          </div>
+
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
               onClick={scrollToContact}
               size="lg" 
-              className="bg-orange-500 hover:bg-orange-600 text-white text-lg px-8 py-4"
+              className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
             >
-              Обсудить проект
+              Получить консультацию
+              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </Button>
+            
             <Button 
-              onClick={() => {
-                const element = document.getElementById('services');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
+              onClick={() => navigate('/cases')}
               variant="outline" 
               size="lg"
-              className="border-gray-300 text-gray-700 hover:bg-gray-50 text-lg px-8 py-4"
+              className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 text-lg px-8 py-4 rounded-xl transition-all duration-300"
             >
-              Узнать больше
+              Посмотреть кейсы
             </Button>
           </div>
 
-          <div className="mt-12 text-center">
-            <p className="text-gray-500 text-sm mb-2">Работаем вдвоём • 16+ лет опыта • Семейный бизнес</p>
-            <p className="text-gray-600">
-              <strong>Михаил</strong> — стратегия, аналитика, SEO • <strong>Анастасия</strong> — продажи, CRM, коммуникации
-            </p>
+          {/* Social proof */}
+          <div className="mt-16 text-center">
+            <p className="text-gray-500 text-sm mb-4">Нам доверяют предприниматели из разных сфер</p>
+            <div className="flex justify-center items-center space-x-8 opacity-60">
+              <div className="text-lg font-semibold text-gray-600">E-commerce</div>
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="text-lg font-semibold text-gray-600">Медицина</div>
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="text-lg font-semibold text-gray-600">Услуги</div>
+            </div>
           </div>
         </div>
       </div>
