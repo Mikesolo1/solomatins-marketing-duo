@@ -10,6 +10,7 @@ import ServicesPage from "./pages/ServicesPage";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import CookieNotice from "./components/CookieNotice";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <CookieNotice />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

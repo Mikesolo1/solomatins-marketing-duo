@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,8 +48,12 @@ const About = () => {
             <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-white overflow-hidden group hover:shadow-2xl transition-all duration-500">
               <CardContent className="p-8">
                 <div className="text-center mb-6">
-                  <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl group-hover:scale-105 transition-transform duration-300">
-                    <span className="text-4xl font-bold text-white">М</span>
+                  <div className="w-32 h-32 mx-auto mb-6 shadow-xl group-hover:scale-105 transition-transform duration-300 rounded-full overflow-hidden">
+                    <img 
+                      src="/lovable-uploads/c09d5c13-5318-4e99-a5f1-604760e1f7a1.png" 
+                      alt="Михаил Соломатин" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">Михаил Соломатин</h3>
                   <p className="text-blue-600 font-medium mb-4">Стратегия • Аналитика • SEO</p>
@@ -75,8 +80,12 @@ const About = () => {
             <Card className="border-0 shadow-xl bg-gradient-to-br from-orange-50 to-white overflow-hidden group hover:shadow-2xl transition-all duration-500">
               <CardContent className="p-8">
                 <div className="text-center mb-6">
-                  <div className="w-32 h-32 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl group-hover:scale-105 transition-transform duration-300">
-                    <span className="text-4xl font-bold text-white">А</span>
+                  <div className="w-32 h-32 mx-auto mb-6 shadow-xl group-hover:scale-105 transition-transform duration-300 rounded-full overflow-hidden">
+                    <img 
+                      src="/lovable-uploads/2843df82-d3a7-474c-ae20-80710ca14840.png" 
+                      alt="Анастасия Соломатина" 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">Анастасия Соломатина</h3>
                   <p className="text-orange-600 font-medium mb-4">Продажи • CRM • Коммуникации</p>
