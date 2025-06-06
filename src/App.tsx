@@ -7,10 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Cases from "./pages/Cases";
 import ServicesPage from "./pages/ServicesPage";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
-import CookieNotice from "./components/CookieNotice";
 
 const queryClient = new QueryClient();
 
@@ -24,11 +21,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/cases" element={<Cases />} />
           <Route path="/services" element={<ServicesPage />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <CookieNotice />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

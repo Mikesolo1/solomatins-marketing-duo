@@ -185,18 +185,8 @@ const Footer = () => {
             </p>
             
             <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <button 
-                onClick={() => navigate('/privacy')}
-                className="hover:text-white transition-colors"
-              >
-                Политика конфиденциальности
-              </button>
-              <button 
-                onClick={() => navigate('/terms')}
-                className="hover:text-white transition-colors"
-              >
-                Пользовательское соглашение
-              </button>
+              <button className="hover:text-white transition-colors">Политика конфиденциальности</button>
+              <button className="hover:text-white transition-colors">Пользовательское соглашение</button>
             </div>
           </div>
         </div>
