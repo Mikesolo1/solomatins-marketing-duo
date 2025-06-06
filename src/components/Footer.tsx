@@ -120,13 +120,14 @@ const Footer = () => {
                 </div>
                 <div>
                   <h5 className="font-semibold text-white">WhatsApp / Telegram</h5>
-                  <p className="text-gray-400 text-sm">Быстрая связь</p>
+                  <p className="text-gray-400 text-sm">+7 (989) 295-10-30</p>
                 </div>
               </div>
               <Button 
                 variant="outline" 
                 size="sm"
                 className="w-full border-gray-600 text-gray-300 hover:bg-green-500/10 hover:border-green-500 hover:text-green-400"
+                onClick={() => window.open('https://wa.me/79892951030', '_blank')}
               >
                 Написать сообщение
               </Button>
@@ -146,6 +147,7 @@ const Footer = () => {
                 variant="outline" 
                 size="sm"
                 className="w-full border-gray-600 text-gray-300 hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-400"
+                onClick={() => window.open('mailto:info@solomatin-marketing.ru', '_blank')}
               >
                 Написать письмо
               </Button>
@@ -158,15 +160,16 @@ const Footer = () => {
                 </div>
                 <div>
                   <h5 className="font-semibold text-white">Телефон</h5>
-                  <p className="text-gray-400 text-sm">+7 (xxx) xxx-xx-xx</p>
+                  <p className="text-gray-400 text-sm">+7 (989) 295-10-30</p>
                 </div>
               </div>
               <Button 
                 variant="outline" 
                 size="sm"
                 className="w-full border-gray-600 text-gray-300 hover:bg-orange-500/10 hover:border-orange-500 hover:text-orange-400"
+                onClick={() => window.open('tel:+79892951030', '_blank')}
               >
-                Заказать звонок
+                Позвонить
               </Button>
             </div>
           </div>

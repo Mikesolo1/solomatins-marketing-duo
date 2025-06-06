@@ -16,23 +16,79 @@ const Contact = () => {
     company: '',
     message: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const sendToTelegram = async (data: typeof formData) => {
+    const botToken = '7457475256:AAHKiVeNSaMbecFN20aFBCSNnMKFl6FjixQ';
+    const chatId = '-4900375409';
     
-    toast({
-      title: "Заявка отправлена!",
-      description: "Мы свяжемся с вами в течение 2 часов в рабочее время",
-    });
+    const message = `🔥 Новая заявка с сайта!
 
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      company: '',
-      message: ''
-    });
+👤 Имя: ${data.name}
+📧 Email: ${data.email}
+📱 Телефон: ${data.phone}
+🏢 Компания: ${data.company}
+💬 Сообщение: ${data.message}
+
+⏰ Время: ${new Date().toLocaleString('ru-RU')}`;
+
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: 'HTML'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка отправки');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Ошибка отправки в Telegram:', error);
+      return false;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const success = await sendToTelegram(formData);
+      
+      if (success) {
+        toast({
+          title: "Заявка отправлена!",
+          description: "Мы свяжемся с вами в течение 2 часов в рабочее время",
+        });
+
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          company: '',
+          message: ''
+        });
+      } else {
+        throw new Error('Ошибка отправки');
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка отправки",
+        description: "Попробуйте еще раз или свяжитесь с нами напрямую",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -48,9 +104,10 @@ const Contact = () => {
       icon: <MessageCircle className="text-green-500" size={24} />,
       title: "WhatsApp",
       description: "Быстрая связь для срочных вопросов",
-      value: "+7 (xxx) xxx-xx-xx",
+      value: "+7 (989) 295-10-30",
       action: "Написать в WhatsApp",
-      color: "bg-green-50 border-green-200 hover:bg-green-100"
+      color: "bg-green-50 border-green-200 hover:bg-green-100",
+      link: "https://wa.me/79892951030"
     },
     {
       icon: <Mail className="text-blue-500" size={24} />,
@@ -58,15 +115,17 @@ const Contact = () => {
       description: "Для подробного обсуждения проекта",
       value: "info@solomatin-marketing.ru",
       action: "Написать письмо",
-      color: "bg-blue-50 border-blue-200 hover:bg-blue-100"
+      color: "bg-blue-50 border-blue-200 hover:bg-blue-100",
+      link: "mailto:info@solomatin-marketing.ru"
     },
     {
       icon: <Phone className="text-orange-500" size={24} />,
       title: "Звонок",
       description: "Предпочитаем сначала переписку",
-      value: "+7 (xxx) xxx-xx-xx",
-      action: "Заказать звонок",
-      color: "bg-orange-50 border-orange-200 hover:bg-orange-100"
+      value: "+7 (989) 295-10-30",
+      action: "Позвонить",
+      color: "bg-orange-50 border-orange-200 hover:bg-orange-100",
+      link: "tel:+79892951030"
     }
   ];
 
@@ -101,7 +160,11 @@ const Contact = () => {
                 <CardContent className="text-center">
                   <p className="text-gray-600 mb-4 text-sm">{method.description}</p>
                   <p className="text-gray-900 font-medium mb-4">{method.value}</p>
-                  <Button variant="outline" className="w-full group-hover:bg-white transition-colors">
+                  <Button 
+                    variant="outline" 
+                    className="w-full group-hover:bg-white transition-colors"
+                    onClick={() => window.open(method.link, '_blank')}
+                  >
                     {method.action}
                   </Button>
                 </CardContent>
@@ -165,7 +228,7 @@ const Contact = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          placeholder="+7 (xxx) xxx-xx-xx"
+                          placeholder="+7 (989) 295-10-30"
                           className="border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                         />
                       </div>
@@ -201,9 +264,10 @@ const Contact = () => {
 
                     <Button 
                       type="submit" 
+                      disabled={isLoading}
                       className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-lg py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
                     >
-                      Отправить заявку
+                      {isLoading ? 'Отправляем...' : 'Отправить заявку'}
                       <Send className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
                     </Button>
 

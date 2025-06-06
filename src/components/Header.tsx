@@ -56,7 +56,9 @@ const Header = () => {
           <div className="hidden lg:flex items-center space-x-4">
             <div className="flex items-center space-x-3 text-sm text-gray-600">
               <Phone size={16} className="text-orange-500" />
-              <span>+7 (xxx) xxx-xx-xx</span>
+              <a href="tel:+79892951030" className="hover:text-orange-500 transition-colors">
+                +7 (989) 295-10-30
+              </a>
             </div>
             
             <Button 
@@ -93,7 +95,9 @@ const Header = () => {
               <div className="pt-4 border-t border-gray-100">
                 <div className="flex items-center space-x-2 text-sm text-gray-600 mb-3">
                   <Phone size={16} className="text-orange-500" />
-                  <span>+7 (xxx) xxx-xx-xx</span>
+                  <a href="tel:+79892951030" className="hover:text-orange-500 transition-colors">
+                    +7 (989) 295-10-30
+                  </a>
                 </div>
                 <Button 
                   onClick={() => scrollToSection('contact')} 
