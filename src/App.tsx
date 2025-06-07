@@ -11,6 +11,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
+import PostEditor from "./pages/PostEditor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,8 @@ const App = () => (
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/post/new" element={<PostEditor />} />
+          <Route path="/admin/post/edit/:id" element={<PostEditor />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

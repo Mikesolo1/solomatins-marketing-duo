@@ -1,205 +1,129 @@
 
-import { Badge } from "@/components/ui/badge";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Mail, Phone, MapPin, Clock, ExternalLink } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Mail, Phone, MessageCircle, MapPin, Clock, Users } from "lucide-react";
 
 const Footer = () => {
-  const navigate = useNavigate();
-
-  const services = [
-    { name: "SEO-продвижение", path: "/services" },
-    { name: "CRM-маркетинг", path: "/services" },
-    { name: "Стратегия и консалтинг", path: "/services" },
-    { name: "Аналитика и аудиты", path: "/services" }
-  ];
-
-  const company = [
-    { name: "О нас", action: () => scrollToSection('about') },
-    { name: "Кейсы", path: "/cases" },
-    { name: "Услуги", path: "/services" },
-    { name: "Блог", path: "/blog" },
-    { name: "Контакты", action: () => scrollToSection('contact') }
-  ];
-
-  const scrollToSection = (sectionId: string) => {
-    navigate('/');
-    setTimeout(() => {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  };
-
   return (
-    <footer className="bg-gray-900 text-white">
-      {/* Main footer content */}
-      <div className="container mx-auto px-4 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Company info */}
-          <div className="md:col-span-2 lg:col-span-2">
-            <div className="mb-6">
-              <h3 className="text-2xl lg:text-3xl font-bold mb-2">Соломатин & Соломатина</h3>
-              <Badge variant="secondary" className="bg-orange-100 text-orange-700 border-orange-200 mb-4">
-                Бутиковая студия интернет-маркетинга
-              </Badge>
-            </div>
-            
-            <p className="text-gray-300 mb-6 text-base lg:text-lg leading-relaxed">
-              SEO. CRM. Повторные продажи.<br />
-              Всё по-честному и по уму.
-            </p>
-
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Clock className="text-orange-400" size={20} />
-                </div>
-                <div>
-                  <div className="font-medium text-white">16+ лет на рынке</div>
-                  <div className="text-gray-400 text-sm">Семейный бизнес с 2008 года</div>
-                </div>
+    <footer className="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-16">
+      <div className="container mx-auto px-4">
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          {/* Contact Cards */}
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
+            <CardContent className="p-6 text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="text-white" size={24} />
               </div>
-              
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <MapPin className="text-blue-400" size={20} />
-                </div>
-                <div>
-                  <div className="font-medium text-white">Работаем удалённо</div>
-                  <div className="text-gray-400 text-sm">Клиенты по всей России</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="text-lg font-semibold mb-6 text-white">Услуги</h4>
-            <ul className="space-y-3">
-              {services.map((service, index) => (
-                <li key={index}>
-                  <button 
-                    onClick={() => navigate(service.path)}
-                    className="text-gray-300 hover:text-orange-400 transition-colors text-left group flex items-center text-sm"
-                  >
-                    {service.name}
-                    <ExternalLink className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity" size={14} />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className="text-lg font-semibold mb-6 text-white">Компания</h4>
-            <ul className="space-y-3">
-              {company.map((item, index) => (
-                <li key={index}>
-                  <button 
-                    onClick={item.action || (() => navigate(item.path || '/'))}
-                    className="text-gray-300 hover:text-orange-400 transition-colors text-left group flex items-center text-sm"
-                  >
-                    {item.name}
-                    <ExternalLink className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity" size={14} />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Contact section */}
-        <div className="border-t border-gray-700 mt-8 lg:mt-12 pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gray-800 rounded-xl p-4 lg:p-6 hover:bg-gray-750 transition-colors group">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
-                  <MessageCircle className="text-green-400" size={24} />
-                </div>
-                <div className="min-w-0">
-                  <h5 className="font-semibold text-white">WhatsApp / Telegram</h5>
-                  <p className="text-gray-400 text-sm">+7 (989) 295-10-30</p>
-                </div>
-              </div>
+              <h3 className="text-lg font-semibold mb-2 text-white">Написать сообщение</h3>
+              <p className="text-gray-300 mb-4 text-sm">Telegram, WhatsApp</p>
               <Button 
                 variant="outline" 
-                size="sm"
-                className="w-full border-gray-600 text-gray-300 hover:bg-green-500/10 hover:border-green-500 hover:text-green-400"
-                onClick={() => window.open('https://wa.me/79892951030', '_blank')}
+                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white"
+                onClick={() => window.open('https://t.me/your_telegram', '_blank')}
               >
-                Написать сообщение
+                Написать
               </Button>
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="bg-gray-800 rounded-xl p-4 lg:p-6 hover:bg-gray-750 transition-colors group">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
-                  <Mail className="text-blue-400" size={24} />
-                </div>
-                <div className="min-w-0">
-                  <h5 className="font-semibold text-white">Email</h5>
-                  <p className="text-gray-400 text-sm break-all">info@solomatin-marketing.ru</p>
-                </div>
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
+            <CardContent className="p-6 text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Mail className="text-white" size={24} />
               </div>
+              <h3 className="text-lg font-semibold mb-2 text-white">Написать письмо</h3>
+              <p className="text-gray-300 mb-4 text-sm">info@example.com</p>
               <Button 
                 variant="outline" 
-                size="sm"
-                className="w-full border-gray-600 text-gray-300 hover:bg-blue-500/10 hover:border-blue-500 hover:text-blue-400"
-                onClick={() => window.open('mailto:info@solomatin-marketing.ru', '_blank')}
+                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white"
+                onClick={() => window.open('mailto:info@example.com', '_blank')}
               >
-                Написать письмо
+                Написать
               </Button>
-            </div>
+            </CardContent>
+          </Card>
 
-            <div className="bg-gray-800 rounded-xl p-4 lg:p-6 hover:bg-gray-750 transition-colors group md:col-span-2 lg:col-span-1">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
-                  <Phone className="text-orange-400" size={24} />
-                </div>
-                <div className="min-w-0">
-                  <h5 className="font-semibold text-white">Телефон</h5>
-                  <p className="text-gray-400 text-sm">+7 (989) 295-10-30</p>
-                </div>
+          <Card className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
+            <CardContent className="p-6 text-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Phone className="text-white" size={24} />
               </div>
+              <h3 className="text-lg font-semibold mb-2 text-white">Позвонить</h3>
+              <p className="text-gray-300 mb-4 text-sm">+7 (XXX) XXX-XX-XX</p>
               <Button 
                 variant="outline" 
-                size="sm"
-                className="w-full border-gray-600 text-gray-300 hover:bg-orange-500/10 hover:border-orange-500 hover:text-orange-400"
-                onClick={() => window.open('tel:+79892951030', '_blank')}
+                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white"
+                onClick={() => window.open('tel:+7XXXXXXXXXX', '_blank')}
               >
                 Позвонить
               </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Company Info */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div>
+            <h4 className="text-lg font-semibold mb-4 text-white">О компании</h4>
+            <p className="text-gray-300 text-sm mb-4">
+              Маркетинговое агентство с 16+ летним опытом. Помогаем бизнесу расти через эффективные маркетинговые стратегии.
+            </p>
+            <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+              Семейный бизнес
+            </Badge>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold mb-4 text-white">Услуги</h4>
+            <ul className="space-y-2 text-gray-300 text-sm">
+              <li>SEO-продвижение</li>
+              <li>CRM-маркетинг</li>
+              <li>Стратегия и консалтинг</li>
+              <li>Аналитика и отчетность</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold mb-4 text-white">Контакты</h4>
+            <div className="space-y-3 text-gray-300 text-sm">
+              <div className="flex items-center space-x-2">
+                <MapPin size={16} />
+                <span>Москва, Россия</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock size={16} />
+                <span>Пн-Пт: 9:00-18:00</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Users size={16} />
+                <span>16+ лет опыта</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold mb-4 text-white">Социальные сети</h4>
+            <p className="text-gray-300 text-sm mb-4">
+              Следите за нашими обновлениями и кейсами
+            </p>
+            <div className="space-y-2">
+              <Button 
+                variant="outline" 
+                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white text-sm"
+              >
+                Telegram канал
+              </Button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Bottom bar */}
-      <div className="border-t border-gray-700">
-        <div className="container mx-auto px-4 py-4 lg:py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm text-center md:text-left">
-              © 2024 Соломатин & Соломатина. Семейный бизнес с 2008 года.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-400">
-              <button 
-                onClick={() => navigate('/privacy')}
-                className="hover:text-white transition-colors"
-              >
-                Политика конфиденциальности
-              </button>
-              <button 
-                onClick={() => navigate('/terms')}
-                className="hover:text-white transition-colors"
-              >
-                Пользовательское соглашение
-              </button>
-            </div>
-          </div>
+        {/* Bottom */}
+        <div className="border-t border-white/20 pt-8 text-center">
+          <p className="text-gray-400 text-sm">
+            © 2024 Маркетинговое агентство. Все права защищены.
+          </p>
         </div>
       </div>
     </footer>
