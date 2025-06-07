@@ -30,6 +30,7 @@ const Header = () => {
   const navigationItems = [
     { label: 'Услуги', action: () => navigate('/services') },
     { label: 'Кейсы', action: () => navigate('/cases') },
+    { label: 'Блог', action: () => navigate('/blog') },
     { label: 'О нас', action: () => scrollToSection('about') },
     { label: 'Контакты', action: () => scrollToSection('contact') }
   ];
