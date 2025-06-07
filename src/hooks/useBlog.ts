@@ -29,13 +29,7 @@ export const useBlog = () => {
     try {
       let query = supabase
         .from('blog_posts')
-        .select(`
-          *,
-          profiles (
-            full_name,
-            avatar_url
-          )
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (published) {
@@ -44,8 +38,28 @@ export const useBlog = () => {
 
       const { data, error } = await query;
 
-      if (error) throw error;
-      setPosts(data || []);
+      if (error) {
+        console.error('Error fetching posts:', error);
+        throw error;
+      }
+      
+      // Получаем информацию об авторах отдельно
+      const postsWithAuthors = await Promise.all(
+        (data || []).map(async (post) => {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name, avatar_url')
+            .eq('id', post.author_id)
+            .single();
+          
+          return {
+            ...post,
+            profiles: profile || undefined
+          };
+        })
+      );
+      
+      setPosts(postsWithAuthors);
     } catch (error) {
       console.error('Error fetching posts:', error);
     } finally {
@@ -57,18 +71,24 @@ export const useBlog = () => {
     try {
       const { data, error } = await supabase
         .from('blog_posts')
-        .select(`
-          *,
-          profiles (
-            full_name,
-            avatar_url
-          )
-        `)
+        .select('*')
         .eq('slug', slug)
         .eq('published', true)
         .single();
 
       if (error) throw error;
+      
+      // Получаем информацию об авторе
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, avatar_url')
+        .eq('id', data.author_id)
+        .single();
+      
+      const postWithAuthor = {
+        ...data,
+        profiles: profile || undefined
+      };
       
       // Увеличиваем счетчик просмотров
       if (data) {
@@ -78,7 +98,7 @@ export const useBlog = () => {
           .eq('id', data.id);
       }
 
-      return data;
+      return postWithAuthor;
     } catch (error) {
       console.error('Error fetching post:', error);
       return null;
@@ -89,7 +109,7 @@ export const useBlog = () => {
     try {
       const { data, error } = await supabase
         .from('blog_posts')
-        .insert([postData])
+        .insert(postData)
         .select()
         .single();
 
