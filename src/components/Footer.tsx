@@ -18,6 +18,7 @@ const Footer = () => {
     { name: "О нас", action: () => scrollToSection('about') },
     { name: "Кейсы", path: "/cases" },
     { name: "Услуги", path: "/services" },
+    { name: "Блог", path: "/blog" },
     { name: "Контакты", action: () => scrollToSection('contact') }
   ];
 
@@ -34,25 +35,25 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       {/* Main footer content */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8">
+      <div className="container mx-auto px-4 py-12 lg:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company info */}
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2 lg:col-span-2">
             <div className="mb-6">
-              <h3 className="text-3xl font-bold mb-2">Соломатин & Соломатина</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-2">Соломатин & Соломатина</h3>
               <Badge variant="secondary" className="bg-orange-100 text-orange-700 border-orange-200 mb-4">
                 Бутиковая студия интернет-маркетинга
               </Badge>
             </div>
             
-            <p className="text-gray-300 mb-6 text-lg leading-relaxed">
+            <p className="text-gray-300 mb-6 text-base lg:text-lg leading-relaxed">
               SEO. CRM. Повторные продажи.<br />
               Всё по-честному и по уму.
             </p>
 
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                   <Clock className="text-orange-400" size={20} />
                 </div>
                 <div>
@@ -62,7 +63,7 @@ const Footer = () => {
               </div>
               
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                   <MapPin className="text-blue-400" size={20} />
                 </div>
                 <div>
@@ -81,7 +82,7 @@ const Footer = () => {
                 <li key={index}>
                   <button 
                     onClick={() => navigate(service.path)}
-                    className="text-gray-300 hover:text-orange-400 transition-colors text-left group flex items-center"
+                    className="text-gray-300 hover:text-orange-400 transition-colors text-left group flex items-center text-sm"
                   >
                     {service.name}
                     <ExternalLink className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity" size={14} />
@@ -99,7 +100,7 @@ const Footer = () => {
                 <li key={index}>
                   <button 
                     onClick={item.action || (() => navigate(item.path || '/'))}
-                    className="text-gray-300 hover:text-orange-400 transition-colors text-left group flex items-center"
+                    className="text-gray-300 hover:text-orange-400 transition-colors text-left group flex items-center text-sm"
                   >
                     {item.name}
                     <ExternalLink className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity" size={14} />
@@ -111,14 +112,14 @@ const Footer = () => {
         </div>
 
         {/* Contact section */}
-        <div className="border-t border-gray-700 mt-12 pt-8">
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors group">
+        <div className="border-t border-gray-700 mt-8 lg:mt-12 pt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-gray-800 rounded-xl p-4 lg:p-6 hover:bg-gray-750 transition-colors group">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
                   <MessageCircle className="text-green-400" size={24} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h5 className="font-semibold text-white">WhatsApp / Telegram</h5>
                   <p className="text-gray-400 text-sm">+7 (989) 295-10-30</p>
                 </div>
@@ -133,14 +134,14 @@ const Footer = () => {
               </Button>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors group">
+            <div className="bg-gray-800 rounded-xl p-4 lg:p-6 hover:bg-gray-750 transition-colors group">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
                   <Mail className="text-blue-400" size={24} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h5 className="font-semibold text-white">Email</h5>
-                  <p className="text-gray-400 text-sm">info@solomatin-marketing.ru</p>
+                  <p className="text-gray-400 text-sm break-all">info@solomatin-marketing.ru</p>
                 </div>
               </div>
               <Button 
@@ -153,12 +154,12 @@ const Footer = () => {
               </Button>
             </div>
 
-            <div className="bg-gray-800 rounded-xl p-6 hover:bg-gray-750 transition-colors group">
+            <div className="bg-gray-800 rounded-xl p-4 lg:p-6 hover:bg-gray-750 transition-colors group md:col-span-2 lg:col-span-1">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
                   <Phone className="text-orange-400" size={24} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h5 className="font-semibold text-white">Телефон</h5>
                   <p className="text-gray-400 text-sm">+7 (989) 295-10-30</p>
                 </div>
@@ -178,15 +179,25 @@ const Footer = () => {
 
       {/* Bottom bar */}
       <div className="border-t border-gray-700">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 py-4 lg:py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm text-center md:text-left">
               © 2024 Соломатин & Соломатина. Семейный бизнес с 2008 года.
             </p>
             
-            <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <button className="hover:text-white transition-colors">Политика конфиденциальности</button>
-              <button className="hover:text-white transition-colors">Пользовательское соглашение</button>
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm text-gray-400">
+              <button 
+                onClick={() => navigate('/privacy')}
+                className="hover:text-white transition-colors"
+              >
+                Политика конфиденциальности
+              </button>
+              <button 
+                onClick={() => navigate('/terms')}
+                className="hover:text-white transition-colors"
+              >
+                Пользовательское соглашение
+              </button>
             </div>
           </div>
         </div>
