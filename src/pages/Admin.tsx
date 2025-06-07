@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { useBlog, BlogPost } from '@/hooks/useBlog';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const Admin = () => {
