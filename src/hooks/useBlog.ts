@@ -1,6 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+
+type BlogPostInsert = Database['public']['Tables']['blog_posts']['Insert'];
+type BlogPostUpdate = Database['public']['Tables']['blog_posts']['Update'];
 
 export interface BlogPost {
   id: string;
@@ -105,7 +108,7 @@ export const useBlog = () => {
     }
   };
 
-  const createPost = async (postData: Partial<BlogPost>) => {
+  const createPost = async (postData: BlogPostInsert) => {
     try {
       const { data, error } = await supabase
         .from('blog_posts')
@@ -121,7 +124,7 @@ export const useBlog = () => {
     }
   };
 
-  const updatePost = async (id: string, postData: Partial<BlogPost>) => {
+  const updatePost = async (id: string, postData: BlogPostUpdate) => {
     try {
       const { data, error } = await supabase
         .from('blog_posts')
