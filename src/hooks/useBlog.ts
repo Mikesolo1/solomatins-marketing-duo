@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
@@ -28,6 +29,7 @@ export const useBlog = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchPosts = async (published = true) => {
+    console.log('Fetching posts, published:', published);
     setLoading(true);
     try {
       let query = supabase
@@ -40,6 +42,8 @@ export const useBlog = () => {
       }
 
       const { data, error } = await query;
+
+      console.log('Posts query result:', data, error);
 
       if (error) {
         console.error('Error fetching posts:', error);
@@ -62,6 +66,7 @@ export const useBlog = () => {
         })
       );
       
+      console.log('Posts with authors:', postsWithAuthors);
       setPosts(postsWithAuthors);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -71,6 +76,7 @@ export const useBlog = () => {
   };
 
   const getPostBySlug = async (slug: string) => {
+    console.log('Getting post by slug:', slug);
     try {
       const { data, error } = await supabase
         .from('blog_posts')
@@ -101,6 +107,7 @@ export const useBlog = () => {
           .eq('id', data.id);
       }
 
+      console.log('Post found:', postWithAuthor);
       return postWithAuthor;
     } catch (error) {
       console.error('Error fetching post:', error);
@@ -109,6 +116,7 @@ export const useBlog = () => {
   };
 
   const createPost = async (postData: BlogPostInsert) => {
+    console.log('Creating post:', postData);
     try {
       const { data, error } = await supabase
         .from('blog_posts')
@@ -117,6 +125,7 @@ export const useBlog = () => {
         .single();
 
       if (error) throw error;
+      console.log('Post created:', data);
       return { data, error: null };
     } catch (error) {
       console.error('Error creating post:', error);
@@ -125,6 +134,7 @@ export const useBlog = () => {
   };
 
   const updatePost = async (id: string, postData: BlogPostUpdate) => {
+    console.log('Updating post:', id, postData);
     try {
       const { data, error } = await supabase
         .from('blog_posts')
@@ -134,6 +144,7 @@ export const useBlog = () => {
         .single();
 
       if (error) throw error;
+      console.log('Post updated:', data);
       return { data, error: null };
     } catch (error) {
       console.error('Error updating post:', error);
@@ -142,6 +153,7 @@ export const useBlog = () => {
   };
 
   const deletePost = async (id: string) => {
+    console.log('Deleting post:', id);
     try {
       const { error } = await supabase
         .from('blog_posts')
@@ -149,6 +161,7 @@ export const useBlog = () => {
         .eq('id', id);
 
       if (error) throw error;
+      console.log('Post deleted');
       return { error: null };
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -157,6 +170,7 @@ export const useBlog = () => {
   };
 
   const uploadImage = async (file: File) => {
+    console.log('Uploading image:', file.name);
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
@@ -172,6 +186,7 @@ export const useBlog = () => {
         .from('blog-images')
         .getPublicUrl(filePath);
 
+      console.log('Image uploaded:', data.publicUrl);
       return { url: data.publicUrl, error: null };
     } catch (error) {
       console.error('Error uploading image:', error);

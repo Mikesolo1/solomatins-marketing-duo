@@ -22,24 +22,31 @@ const Auth = () => {
 
     try {
       if (isLogin) {
+        console.log('Attempting login with:', email);
         const { error } = await signIn(email, password);
         if (error) {
+          console.error('Login error:', error);
           toast.error(error.message);
         } else {
+          console.log('Login successful');
           toast.success('Вход выполнен успешно!');
-          // Принудительное перенаправление в админку
-          window.location.href = '/admin';
+          // Используем navigate вместо window.location.href
+          navigate('/admin', { replace: true });
         }
       } else {
+        console.log('Attempting signup with:', email);
         const { error } = await signUp(email, password, fullName);
         if (error) {
+          console.error('Signup error:', error);
           toast.error(error.message);
         } else {
+          console.log('Signup successful');
           toast.success('Регистрация успешна! Проверьте email для подтверждения.');
         }
       }
     } catch (error) {
-      toast.error('Произошла ошибка');
+      console.error('Auth error:', error);
+      toast.error('Произошла ошибка при авторизации');
     } finally {
       setLoading(false);
     }

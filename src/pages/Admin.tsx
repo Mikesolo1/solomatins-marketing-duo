@@ -10,37 +10,57 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const Admin = () => {
-  const { user, signOut } = useAuth();
-  const { posts, loading, fetchPosts, deletePost } = useBlog();
+  const { user, signOut, loading: authLoading } = useAuth();
+  const { posts, loading: postsLoading, fetchPosts, deletePost } = useBlog();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
 
   useEffect(() => {
+    console.log('Admin useEffect - user:', user?.email, 'authLoading:', authLoading);
+    
     const checkAdminRole = async () => {
+      if (authLoading) {
+        console.log('Still loading auth, waiting...');
+        return;
+      }
+
       if (!user) {
+        console.log('No user found, redirecting to auth');
         navigate('/auth');
         return;
       }
 
+      console.log('Checking admin role for user:', user.id);
+      setCheckingAdmin(true);
+
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('role')
+          .select('role, full_name, email')
           .eq('id', user.id)
           .single();
 
-        if (error) throw error;
+        console.log('Profile query result:', data, error);
+
+        if (error) {
+          console.error('Error fetching profile:', error);
+          toast.error('Ошибка проверки прав доступа: ' + error.message);
+          navigate('/');
+          return;
+        }
         
         if (data?.role === 'admin') {
+          console.log('User is admin, setting access');
           setIsAdmin(true);
           fetchPosts(false); // Получаем все посты, включая неопубликованные
         } else {
-          toast.error('У вас нет прав администратора');
+          console.log('User is not admin, role:', data?.role);
+          toast.error('У вас нет прав администратора. Текущая роль: ' + (data?.role || 'не определена'));
           navigate('/');
         }
       } catch (error) {
-        console.error('Error checking admin role:', error);
+        console.error('Error in checkAdminRole:', error);
         toast.error('Ошибка проверки прав доступа');
         navigate('/');
       } finally {
@@ -49,7 +69,7 @@ const Admin = () => {
     };
 
     checkAdminRole();
-  }, [user, navigate, fetchPosts]);
+  }, [user, authLoading, navigate, fetchPosts]);
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -80,12 +100,14 @@ const Admin = () => {
     });
   };
 
-  if (checkingAdmin) {
+  if (authLoading || checkingAdmin) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Проверка прав доступа...</p>
+          <p className="mt-4 text-gray-600">
+            {authLoading ? 'Проверка авторизации...' : 'Проверка прав доступа...'}
+          </p>
         </div>
       </div>
     );
@@ -102,6 +124,9 @@ const Admin = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">Админка блога</h1>
             <div className="flex items-center gap-4">
+              <span className="text-sm text-gray-600">
+                Привет, {user?.email}!
+              </span>
               <Link to="/">
                 <Button variant="outline">
                   На сайт
@@ -127,7 +152,7 @@ const Admin = () => {
           </Link>
         </div>
 
-        {loading ? (
+        {postsLoading ? (
           <div className="text-center py-16">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-500 mx-auto"></div>
             <p className="mt-4 text-gray-600">Загрузка статей...</p>
