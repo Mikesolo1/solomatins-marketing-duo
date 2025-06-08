@@ -21,7 +21,7 @@ const Footer = () => {
               <Button 
                 variant="outline" 
                 className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white"
-                onClick={() => window.open('https://t.me/your_telegram', '_blank')}
+                onClick={() => window.open('https://wa.me/79892951030', '_blank')}
               >
                 Написать
               </Button>
@@ -34,11 +34,11 @@ const Footer = () => {
                 <Mail className="text-white" size={24} />
               </div>
               <h3 className="text-lg font-semibold mb-2 text-white">Написать письмо</h3>
-              <p className="text-gray-300 mb-4 text-sm">info@example.com</p>
+              <p className="text-gray-300 mb-4 text-sm">info@solomatin-marketing.ru</p>
               <Button 
                 variant="outline" 
                 className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white"
-                onClick={() => window.open('mailto:info@example.com', '_blank')}
+                onClick={() => window.open('mailto:info@solomatin-marketing.ru', '_blank')}
               >
                 Написать
               </Button>
@@ -51,11 +51,11 @@ const Footer = () => {
                 <Phone className="text-white" size={24} />
               </div>
               <h3 className="text-lg font-semibold mb-2 text-white">Позвонить</h3>
-              <p className="text-gray-300 mb-4 text-sm">+7 (XXX) XXX-XX-XX</p>
+              <p className="text-gray-300 mb-4 text-sm">+7 (989) 295-10-30</p>
               <Button 
                 variant="outline" 
                 className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white"
-                onClick={() => window.open('tel:+7XXXXXXXXXX', '_blank')}
+                onClick={() => window.open('tel:+79892951030', '_blank')}
               >
                 Позвонить
               </Button>

@@ -15,7 +15,9 @@ import {
   Star,
   Award,
   Clock,
-  Shield
+  Shield,
+  Mail,
+  Phone
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -294,15 +296,19 @@ const ServicesPage = () => {
             <Button 
               size="lg"
               className="bg-white text-orange-500 hover:bg-gray-100 shadow-lg px-8"
+              onClick={() => window.open('mailto:info@solomatin-marketing.ru', '_blank')}
             >
+              <Mail size={16} className="mr-2" />
               Получить консультацию
             </Button>
             <Button 
               size="lg"
               variant="outline"
               className="border-white text-white hover:bg-white hover:text-orange-500 px-8"
+              onClick={() => window.open('tel:+79892951030', '_blank')}
             >
-              Посмотреть кейсы
+              <Phone size={16} className="mr-2" />
+              Позвонить
             </Button>
           </div>
         </div>

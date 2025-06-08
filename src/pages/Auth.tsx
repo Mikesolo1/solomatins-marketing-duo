@@ -27,7 +27,8 @@ const Auth = () => {
           toast.error(error.message);
         } else {
           toast.success('Вход выполнен успешно!');
-          navigate('/admin');
+          // Принудительное перенаправление в админку
+          window.location.href = '/admin';
         }
       } else {
         const { error } = await signUp(email, password, fullName);
