@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Plus, Edit, Trash2, Eye, LogOut } from 'lucide-react';
@@ -35,28 +34,59 @@ const Admin = () => {
       setCheckingAdmin(true);
 
       try {
-        const { data, error } = await supabase
+        // Сначала проверяем, есть ли профиль пользователя
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role, full_name, email')
           .eq('id', user.id)
           .single();
 
-        console.log('Profile query result:', data, error);
+        console.log('Profile query result:', profile, profileError);
 
-        if (error) {
-          console.error('Error fetching profile:', error);
-          toast.error('Ошибка проверки прав доступа: ' + error.message);
-          navigate('/');
-          return;
+        if (profileError) {
+          if (profileError.code === 'PGRST116') {
+            // Профиль не найден, создаем его
+            console.log('Profile not found, creating...');
+            const { data: newProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert({
+                id: user.id,
+                email: user.email || '',
+                full_name: user.user_metadata?.full_name || '',
+                role: 'user' // По умолчанию обычный пользователь
+              })
+              .select()
+              .single();
+
+            if (createError) {
+              console.error('Error creating profile:', createError);
+              toast.error('Ошибка создания профиля: ' + createError.message);
+              navigate('/');
+              return;
+            }
+
+            console.log('Profile created:', newProfile);
+            
+            if (newProfile.role !== 'admin') {
+              toast.error('У вас нет прав администратора');
+              navigate('/');
+              return;
+            }
+          } else {
+            console.error('Error fetching profile:', profileError);
+            toast.error('Ошибка проверки прав доступа: ' + profileError.message);
+            navigate('/');
+            return;
+          }
         }
         
-        if (data?.role === 'admin') {
+        if (profile?.role === 'admin') {
           console.log('User is admin, setting access');
           setIsAdmin(true);
           fetchPosts(false); // Получаем все посты, включая неопубликованные
         } else {
-          console.log('User is not admin, role:', data?.role);
-          toast.error('У вас нет прав администратора. Текущая роль: ' + (data?.role || 'не определена'));
+          console.log('User is not admin, role:', profile?.role);
+          toast.error('У вас нет прав администратора. Текущая роль: ' + (profile?.role || 'не определена'));
           navigate('/');
         }
       } catch (error) {

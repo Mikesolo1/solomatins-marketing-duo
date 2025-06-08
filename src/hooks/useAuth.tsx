@@ -33,48 +33,85 @@ export const useAuth = () => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    console.log('Signing in with email:', email);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      console.error('Sign in error:', error);
-    } else {
-      console.log('Sign in successful');
+    console.log('Attempting sign in with email:', email);
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      console.log('Sign in response:', { data, error });
+      
+      if (error) {
+        console.error('Sign in error:', error);
+        return { error };
+      }
+      
+      console.log('Sign in successful for user:', data.user?.email);
+      return { error: null };
+    } catch (error) {
+      console.error('Unexpected sign in error:', error);
+      return { error };
+    } finally {
+      setLoading(false);
     }
-    return { error };
   };
 
   const signUp = async (email: string, password: string, fullName?: string) => {
-    console.log('Signing up with email:', email);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: {
-          full_name: fullName,
+    console.log('Attempting sign up with email:', email);
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: fullName,
+          }
         }
+      });
+      
+      console.log('Sign up response:', { data, error });
+      
+      if (error) {
+        console.error('Sign up error:', error);
+        return { error };
       }
-    });
-    if (error) {
-      console.error('Sign up error:', error);
-    } else {
-      console.log('Sign up successful');
+      
+      console.log('Sign up successful for user:', data.user?.email);
+      return { error: null };
+    } catch (error) {
+      console.error('Unexpected sign up error:', error);
+      return { error };
+    } finally {
+      setLoading(false);
     }
-    return { error };
   };
 
   const signOut = async () => {
-    console.log('Signing out');
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Sign out error:', error);
-    } else {
+    console.log('Attempting sign out');
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Sign out error:', error);
+        return { error };
+      }
+      
       console.log('Sign out successful');
+      return { error: null };
+    } catch (error) {
+      console.error('Unexpected sign out error:', error);
+      return { error };
+    } finally {
+      setLoading(false);
     }
-    return { error };
   };
 
   return {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
@@ -50,26 +49,32 @@ export const useBlog = () => {
         throw error;
       }
       
-      // Получаем информацию об авторах отдельно
-      const postsWithAuthors = await Promise.all(
-        (data || []).map(async (post) => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('full_name, avatar_url')
-            .eq('id', post.author_id)
-            .single();
-          
-          return {
-            ...post,
-            profiles: profile || undefined
-          };
-        })
-      );
-      
-      console.log('Posts with authors:', postsWithAuthors);
-      setPosts(postsWithAuthors);
+      // Получаем информацию об авторах отдельно, если есть посты
+      if (data && data.length > 0) {
+        const postsWithAuthors = await Promise.all(
+          data.map(async (post) => {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('full_name, avatar_url')
+              .eq('id', post.author_id)
+              .single();
+            
+            return {
+              ...post,
+              profiles: profile || undefined
+            };
+          })
+        );
+        
+        console.log('Posts with authors:', postsWithAuthors);
+        setPosts(postsWithAuthors);
+      } else {
+        console.log('No posts found');
+        setPosts([]);
+      }
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setPosts([]);
     } finally {
       setLoading(false);
     }
