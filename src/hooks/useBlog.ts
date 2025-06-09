@@ -18,6 +18,9 @@ export interface BlogPost {
   updated_at: string;
   author_id: string;
   views: number;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
   profiles?: {
     full_name: string;
     avatar_url?: string;

@@ -21,7 +21,8 @@ import {
   Link as LinkIcon,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  Video
 } from 'lucide-react';
 
 interface RichTextEditorProps {
@@ -33,8 +34,10 @@ interface RichTextEditorProps {
 const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProps) => {
   const [imageUrl, setImageUrl] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [showImageDialog, setShowImageDialog] = useState(false);
   const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -73,6 +76,56 @@ const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProp
       setShowLinkDialog(false);
     }
   }, [editor, linkUrl]);
+
+  const addVideo = useCallback(() => {
+    if (videoUrl && editor) {
+      let embedCode = '';
+      
+      // YouTube
+      if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+        const videoId = videoUrl.includes('youtu.be') 
+          ? videoUrl.split('/').pop()?.split('?')[0]
+          : videoUrl.split('v=')[1]?.split('&')[0];
+        
+        if (videoId) {
+          embedCode = `<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000;">
+            <iframe src="https://www.youtube.com/embed/${videoId}" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                    frameborder="0" 
+                    allowfullscreen>
+            </iframe>
+          </div>`;
+        }
+      }
+      // Vimeo
+      else if (videoUrl.includes('vimeo.com')) {
+        const videoId = videoUrl.split('/').pop();
+        if (videoId) {
+          embedCode = `<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000;">
+            <iframe src="https://player.vimeo.com/video/${videoId}" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                    frameborder="0" 
+                    allowfullscreen>
+            </iframe>
+          </div>`;
+        }
+      }
+      // Прямая ссылка на видео
+      else {
+        embedCode = `<video controls style="max-width: 100%; height: auto;">
+          <source src="${videoUrl}" type="video/mp4">
+          Ваш браузер не поддерживает видео.
+        </video>`;
+      }
+
+      if (embedCode) {
+        editor.chain().focus().insertContent(embedCode).run();
+      }
+      
+      setVideoUrl('');
+      setShowVideoDialog(false);
+    }
+  }, [editor, videoUrl]);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -213,6 +266,15 @@ const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProp
           type="button"
           variant="ghost"
           size="sm"
+          onClick={() => setShowVideoDialog(true)}
+        >
+          <Video size={16} />
+        </Button>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => setShowLinkDialog(true)}
         >
           <LinkIcon size={16} />
@@ -249,7 +311,7 @@ const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProp
       {/* Image Dialog */}
       {showImageDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Добавить изображение</h3>
             <Input
               placeholder="URL изображения"
@@ -267,10 +329,34 @@ const RichTextEditor = ({ content, onChange, onImageUpload }: RichTextEditorProp
         </div>
       )}
 
+      {/* Video Dialog */}
+      {showVideoDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Добавить видео</h3>
+            <p className="text-sm text-gray-600 mb-3">
+              Поддерживаются ссылки YouTube, Vimeo или прямые ссылки на видео файлы
+            </p>
+            <Input
+              placeholder="URL видео (YouTube, Vimeo или прямая ссылка)"
+              value={videoUrl}
+              onChange={(e) => setVideoUrl(e.target.value)}
+              className="mb-4"
+            />
+            <div className="flex gap-2">
+              <Button onClick={addVideo}>Добавить</Button>
+              <Button variant="outline" onClick={() => setShowVideoDialog(false)}>
+                Отмена
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Link Dialog */}
       {showLinkDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
             <h3 className="text-lg font-semibold mb-4">Добавить ссылку</h3>
             <Input
               placeholder="URL ссылки"

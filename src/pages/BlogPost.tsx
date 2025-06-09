@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, Eye, ArrowLeft } from 'lucide-react';
@@ -23,7 +24,44 @@ const BlogPost = () => {
     };
 
     fetchPost();
-  }, [slug, getPostBySlug]);
+  }, [slug]);
+
+  // Обновляем meta теги для SEO
+  useEffect(() => {
+    if (post) {
+      // Обновляем title страницы
+      document.title = post.meta_title || post.title;
+      
+      // Обновляем meta description
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', post.meta_description || post.excerpt || '');
+      } else {
+        const meta = document.createElement('meta');
+        meta.name = 'description';
+        meta.content = post.meta_description || post.excerpt || '';
+        document.head.appendChild(meta);
+      }
+
+      // Обновляем meta keywords
+      const metaKeywords = document.querySelector('meta[name="keywords"]');
+      if (post.meta_keywords) {
+        if (metaKeywords) {
+          metaKeywords.setAttribute('content', post.meta_keywords);
+        } else {
+          const meta = document.createElement('meta');
+          meta.name = 'keywords';
+          meta.content = post.meta_keywords;
+          document.head.appendChild(meta);
+        }
+      }
+    }
+
+    // Очистка при размонтировании
+    return () => {
+      document.title = 'Blog';
+    };
+  }, [post]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ru-RU', {
@@ -127,7 +165,7 @@ const BlogPost = () => {
           {/* Article Content */}
           <div className="max-w-none">
             <div 
-              className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-orange-500 prose-strong:text-gray-900 prose-blockquote:border-orange-500 prose-blockquote:text-gray-700"
+              className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-orange-500 prose-strong:text-gray-900 prose-blockquote:border-orange-500 prose-blockquote:text-gray-700 prose-video:w-full"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>

@@ -12,11 +12,12 @@ import { ArrowLeft, Save, Eye, Upload } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useBlog } from '@/hooks/useBlog';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import RichTextEditor from '@/components/RichTextEditor';
 
 const PostEditor = () => {
   const { user } = useAuth();
-  const { createPost, updatePost, uploadImage, getPostBySlug } = useBlog();
+  const { createPost, updatePost, uploadImage } = useBlog();
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
@@ -27,7 +28,10 @@ const PostEditor = () => {
     excerpt: '',
     content: '',
     featured_image: '',
-    published: false
+    published: false,
+    meta_title: '',
+    meta_description: '',
+    meta_keywords: ''
   });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -48,7 +52,15 @@ const PostEditor = () => {
     
     setLoading(true);
     try {
-      const post = await getPostBySlug(id);
+      // Загружаем статью по ID, а не по slug
+      const { data: post, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      
       if (post) {
         setFormData({
           title: post.title,
@@ -56,12 +68,16 @@ const PostEditor = () => {
           excerpt: post.excerpt || '',
           content: post.content,
           featured_image: post.featured_image || '',
-          published: post.published
+          published: post.published,
+          meta_title: post.meta_title || '',
+          meta_description: post.meta_description || '',
+          meta_keywords: post.meta_keywords || ''
         });
       }
     } catch (error) {
       console.error('Error loading post:', error);
       toast.error('Ошибка загрузки статьи');
+      navigate('/admin');
     } finally {
       setLoading(false);
     }
@@ -236,12 +252,63 @@ const PostEditor = () => {
 
             <Card>
               <CardHeader>
+                <CardTitle>SEO мета-теги</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="meta-title">Meta Title</Label>
+                  <Input
+                    id="meta-title"
+                    value={formData.meta_title}
+                    onChange={(e) => setFormData(prev => ({ ...prev, meta_title: e.target.value }))}
+                    placeholder="SEO заголовок для поисковых систем"
+                    className="mt-1"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Рекомендуется до 60 символов
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="meta-description">Meta Description</Label>
+                  <Textarea
+                    id="meta-description"
+                    value={formData.meta_description}
+                    onChange={(e) => setFormData(prev => ({ ...prev, meta_description: e.target.value }))}
+                    placeholder="Описание статьи для поисковых систем"
+                    className="mt-1"
+                    rows={3}
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Рекомендуется до 160 символов
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="meta-keywords">Meta Keywords</Label>
+                  <Input
+                    id="meta-keywords"
+                    value={formData.meta_keywords}
+                    onChange={(e) => setFormData(prev => ({ ...prev, meta_keywords: e.target.value }))}
+                    placeholder="ключевые слова, через запятую"
+                    className="mt-1"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
                 <CardTitle>Содержание статьи</CardTitle>
               </CardHeader>
               <CardContent>
                 <RichTextEditor
                   content={formData.content}
                   onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                  onImageUpload={async (file) => {
+                    const { url } = await uploadImage(file);
+                    return url || '';
+                  }}
                 />
               </CardContent>
             </Card>
