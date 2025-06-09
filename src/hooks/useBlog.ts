@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -27,7 +28,7 @@ export const useBlog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchPosts = async (published = true) => {
+  const fetchPosts = useCallback(async (published = true) => {
     console.log('Fetching posts, published:', published);
     setLoading(true);
     try {
@@ -78,9 +79,9 @@ export const useBlog = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getPostBySlug = async (slug: string) => {
+  const getPostBySlug = useCallback(async (slug: string) => {
     console.log('Getting post by slug:', slug);
     try {
       const { data, error } = await supabase
@@ -118,9 +119,9 @@ export const useBlog = () => {
       console.error('Error fetching post:', error);
       return null;
     }
-  };
+  }, []);
 
-  const createPost = async (postData: BlogPostInsert) => {
+  const createPost = useCallback(async (postData: BlogPostInsert) => {
     console.log('Creating post:', postData);
     try {
       const { data, error } = await supabase
@@ -136,9 +137,9 @@ export const useBlog = () => {
       console.error('Error creating post:', error);
       return { data: null, error };
     }
-  };
+  }, []);
 
-  const updatePost = async (id: string, postData: BlogPostUpdate) => {
+  const updatePost = useCallback(async (id: string, postData: BlogPostUpdate) => {
     console.log('Updating post:', id, postData);
     try {
       const { data, error } = await supabase
@@ -155,9 +156,9 @@ export const useBlog = () => {
       console.error('Error updating post:', error);
       return { data: null, error };
     }
-  };
+  }, []);
 
-  const deletePost = async (id: string) => {
+  const deletePost = useCallback(async (id: string) => {
     console.log('Deleting post:', id);
     try {
       const { error } = await supabase
@@ -172,9 +173,9 @@ export const useBlog = () => {
       console.error('Error deleting post:', error);
       return { error };
     }
-  };
+  }, []);
 
-  const uploadImage = async (file: File) => {
+  const uploadImage = useCallback(async (file: File) => {
     console.log('Uploading image:', file.name);
     try {
       const fileExt = file.name.split('.').pop();
@@ -197,11 +198,11 @@ export const useBlog = () => {
       console.error('Error uploading image:', error);
       return { url: null, error };
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [fetchPosts]);
 
   return {
     posts,

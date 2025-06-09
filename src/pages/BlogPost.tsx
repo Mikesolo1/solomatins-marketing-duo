@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, User, Eye, ArrowLeft } from 'lucide-react';
@@ -14,13 +13,13 @@ const BlogPost = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!slug) return;
+
     const fetchPost = async () => {
-      if (slug) {
-        setLoading(true);
-        const postData = await getPostBySlug(slug);
-        setPost(postData);
-        setLoading(false);
-      }
+      setLoading(true);
+      const postData = await getPostBySlug(slug);
+      setPost(postData);
+      setLoading(false);
     };
 
     fetchPost();
