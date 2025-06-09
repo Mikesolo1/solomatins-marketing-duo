@@ -17,6 +17,9 @@ export type Database = {
           excerpt: string | null
           featured_image: string | null
           id: string
+          meta_description: string | null
+          meta_keywords: string | null
+          meta_title: string | null
           published: boolean
           slug: string
           title: string
@@ -30,6 +33,9 @@ export type Database = {
           excerpt?: string | null
           featured_image?: string | null
           id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
           published?: boolean
           slug: string
           title: string
@@ -43,6 +49,9 @@ export type Database = {
           excerpt?: string | null
           featured_image?: string | null
           id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
           published?: boolean
           slug?: string
           title?: string
