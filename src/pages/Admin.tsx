@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Plus, Edit, Trash2, Eye, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,98 +15,103 @@ const Admin = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [adminCheckCompleted, setAdminCheckCompleted] = useState(false);
 
-  useEffect(() => {
-    console.log('Admin useEffect - user:', user?.email, 'authLoading:', authLoading);
-    
-    const checkAdminRole = async () => {
-      if (authLoading) {
-        console.log('Still loading auth, waiting...');
-        return;
-      }
+  const checkAdminRole = useCallback(async () => {
+    if (authLoading || adminCheckCompleted) {
+      console.log('Skipping admin check - authLoading:', authLoading, 'adminCheckCompleted:', adminCheckCompleted);
+      return;
+    }
 
-      if (!user) {
-        console.log('No user found, redirecting to auth');
-        navigate('/auth');
-        return;
-      }
+    if (!user) {
+      console.log('No user found, redirecting to auth');
+      navigate('/auth');
+      return;
+    }
 
-      console.log('Checking admin role for user:', user.id);
-      setCheckingAdmin(true);
+    console.log('Checking admin role for user:', user.id);
+    setCheckingAdmin(true);
 
-      try {
-        // Сначала проверяем, есть ли профиль пользователя
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role, full_name, email')
-          .eq('id', user.id)
-          .single();
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, full_name, email')
+        .eq('id', user.id)
+        .single();
 
-        console.log('Profile query result:', profile, profileError);
+      console.log('Profile query result:', profile, profileError);
 
-        if (profileError) {
-          if (profileError.code === 'PGRST116') {
-            // Профиль не найден, создаем его
-            console.log('Profile not found, creating...');
-            const { data: newProfile, error: createError } = await supabase
-              .from('profiles')
-              .insert({
-                id: user.id,
-                email: user.email || '',
-                full_name: user.user_metadata?.full_name || '',
-                role: 'user' // По умолчанию обычный пользователь
-              })
-              .select()
-              .single();
+      if (profileError) {
+        if (profileError.code === 'PGRST116') {
+          console.log('Profile not found, creating...');
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              email: user.email || '',
+              full_name: user.user_metadata?.full_name || '',
+              role: 'user'
+            })
+            .select()
+            .single();
 
-            if (createError) {
-              console.error('Error creating profile:', createError);
-              toast.error('Ошибка создания профиля: ' + createError.message);
-              navigate('/');
-              return;
-            }
-
-            console.log('Profile created:', newProfile);
-            
-            if (newProfile.role !== 'admin') {
-              toast.error('У вас нет прав администратора');
-              navigate('/');
-              return;
-            }
-          } else {
-            console.error('Error fetching profile:', profileError);
-            toast.error('Ошибка проверки прав доступа: ' + profileError.message);
+          if (createError) {
+            console.error('Error creating profile:', createError);
+            toast.error('Ошибка создания профиля: ' + createError.message);
             navigate('/');
             return;
           }
-        }
-        
-        if (profile?.role === 'admin') {
-          console.log('User is admin, setting access');
-          setIsAdmin(true);
-          fetchPosts(false); // Получаем все посты, включая неопубликованные
-        } else {
-          console.log('User is not admin, role:', profile?.role);
-          toast.error('У вас нет прав администратора. Текущая роль: ' + (profile?.role || 'не определена'));
-          navigate('/');
-        }
-      } catch (error) {
-        console.error('Error in checkAdminRole:', error);
-        toast.error('Ошибка проверки прав доступа');
-        navigate('/');
-      } finally {
-        setCheckingAdmin(false);
-      }
-    };
 
+          console.log('Profile created:', newProfile);
+          
+          if (newProfile.role !== 'admin') {
+            toast.error('У вас нет прав администратора');
+            navigate('/');
+            return;
+          }
+        } else {
+          console.error('Error fetching profile:', profileError);
+          toast.error('Ошибка проверки прав доступа: ' + profileError.message);
+          navigate('/');
+          return;
+        }
+      }
+      
+      if (profile?.role === 'admin') {
+        console.log('User is admin, setting access');
+        setIsAdmin(true);
+        // Загружаем посты только один раз при получении доступа
+        if (!adminCheckCompleted) {
+          fetchPosts(false);
+        }
+      } else {
+        console.log('User is not admin, role:', profile?.role);
+        toast.error('У вас нет прав администратора. Текущая роль: ' + (profile?.role || 'не определена'));
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error in checkAdminRole:', error);
+      toast.error('Ошибка проверки прав доступа');
+      navigate('/');
+    } finally {
+      setCheckingAdmin(false);
+      setAdminCheckCompleted(true);
+    }
+  }, [user, authLoading, navigate, fetchPosts, adminCheckCompleted]);
+
+  useEffect(() => {
+    console.log('Admin useEffect - user:', user?.email, 'authLoading:', authLoading, 'adminCheckCompleted:', adminCheckCompleted);
     checkAdminRole();
-  }, [user, authLoading, navigate, fetchPosts]);
+  }, [checkAdminRole]);
 
   const handleSignOut = async () => {
     const { error } = await signOut();
     if (error) {
       toast.error('Ошибка выхода');
     } else {
+      // Сбрасываем состояние при выходе
+      setIsAdmin(false);
+      setAdminCheckCompleted(false);
       navigate('/');
     }
   };
