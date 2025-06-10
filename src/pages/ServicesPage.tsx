@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const ServicesPage = () => {
+  const scrollToContacts = () => {
+    const footer = document.querySelector('footer');
+    if (footer) {
+      footer.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const services = [
     {
       icon: <Search className="text-white" size={32} />,
@@ -209,6 +215,7 @@ const ServicesPage = () => {
                   </div>
 
                   <Button 
+                    onClick={scrollToContacts}
                     className={`w-full bg-gradient-to-r ${service.gradient} hover:opacity-90 text-white border-0 shadow-lg`}
                   >
                     Заказать услугу
