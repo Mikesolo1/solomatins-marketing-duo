@@ -179,24 +179,34 @@ export const useBlog = () => {
   }, []);
 
   const uploadImage = useCallback(async (file: File) => {
-    console.log('Uploading image:', file.name);
+    console.log('Uploading image:', file.name, 'Size:', file.size);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = fileName;
 
-      const { error: uploadError } = await supabase.storage
+      console.log('Uploading to path:', filePath);
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('blog-images')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
 
-      const { data } = supabase.storage
+      console.log('Upload successful:', uploadData);
+
+      const { data: urlData } = supabase.storage
         .from('blog-images')
         .getPublicUrl(filePath);
 
-      console.log('Image uploaded:', data.publicUrl);
-      return { url: data.publicUrl, error: null };
+      console.log('Image uploaded successfully:', urlData.publicUrl);
+      return { url: urlData.publicUrl, error: null };
     } catch (error) {
       console.error('Error uploading image:', error);
       return { url: null, error };

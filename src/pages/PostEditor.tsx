@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,7 @@ import { useBlog } from '@/hooks/useBlog';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import RichTextEditor from '@/components/RichTextEditor';
+import HtmlTemplates from '@/components/HtmlTemplates';
 
 const PostEditor = () => {
   const { user, loading: authLoading } = useAuth();
@@ -181,19 +181,35 @@ const PostEditor = () => {
   };
 
   const handleImageUpload = async (file: File) => {
+    console.log('Starting image upload:', file.name, file.size);
     setUploading(true);
     try {
       const { url, error } = await uploadImage(file);
-      if (error) throw error;
+      if (error) {
+        console.error('Upload error in component:', error);
+        throw error;
+      }
       
-      setFormData(prev => ({ ...prev, featured_image: url || '' }));
-      toast.success('Изображение загружено');
+      console.log('Image uploaded successfully, URL:', url);
+      if (url) {
+        setFormData(prev => ({ ...prev, featured_image: url }));
+        toast.success('Изображение загружено успешно');
+      } else {
+        throw new Error('Не удалось получить URL изображения');
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
-      toast.error('Ошибка загрузки изображения');
+      toast.error('Ошибка загрузки изображения: ' + (error as Error).message);
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleInsertTemplate = (html: string) => {
+    setFormData(prev => ({
+      ...prev,
+      content: prev.content + '\n' + html
+    }));
   };
 
   const handleSubmit = async (publish = false) => {
@@ -301,7 +317,7 @@ const PostEditor = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-4 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
@@ -400,20 +416,38 @@ const PostEditor = () => {
                 <CardTitle>Содержание статьи</CardTitle>
               </CardHeader>
               <CardContent>
-                <RichTextEditor
-                  content={formData.content}
-                  onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-                  onImageUpload={async (file) => {
-                    const { url } = await uploadImage(file);
-                    return url || '';
-                  }}
-                />
+                <div className="mb-4">
+                  <Label htmlFor="content-textarea">HTML контент</Label>
+                  <Textarea
+                    id="content-textarea"
+                    value={formData.content}
+                    onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                    placeholder="Введите содержание статьи с HTML разметкой..."
+                    className="mt-1 min-h-[400px] font-mono text-sm"
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    Вы можете использовать HTML теги для форматирования текста
+                  </p>
+                </div>
+                
+                <div className="border rounded-lg p-4 bg-gray-50">
+                  <h4 className="font-semibold mb-2">Предварительный просмотр:</h4>
+                  <div 
+                    className="blog-content bg-white p-4 rounded border"
+                    dangerouslySetInnerHTML={{ __html: formData.content }}
+                  />
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
+          {/* Templates Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            <HtmlTemplates onInsertTemplate={handleInsertTemplate} />
+          </div>
+
+          {/* Settings Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Публикация</CardTitle>
@@ -453,7 +487,10 @@ const PostEditor = () => {
                     accept="image/*"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleImageUpload(file);
+                      if (file) {
+                        console.log('File selected:', file.name, file.size);
+                        handleImageUpload(file);
+                      }
                     }}
                     className="hidden"
                   />
