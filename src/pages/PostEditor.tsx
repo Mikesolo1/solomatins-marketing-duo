@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,11 +16,15 @@ import { supabase } from '@/integrations/supabase/client';
 import RichTextEditor from '@/components/RichTextEditor';
 
 const PostEditor = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { createPost, updatePost, uploadImage } = useBlog();
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [adminCheckCompleted, setAdminCheckCompleted] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -36,23 +40,100 @@ const PostEditor = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
+  const checkAdminRole = useCallback(async () => {
+    if (authLoading || adminCheckCompleted) {
+      console.log('Skipping admin check - authLoading:', authLoading, 'adminCheckCompleted:', adminCheckCompleted);
+      return;
+    }
+
     if (!user) {
+      console.log('No user found, redirecting to auth');
       navigate('/auth');
       return;
     }
 
-    if (isEdit && id) {
+    console.log('Checking admin role for user:', user.id);
+    setCheckingAdmin(true);
+
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role, full_name, email')
+        .eq('id', user.id)
+        .single();
+
+      console.log('Profile query result:', profile, profileError);
+
+      if (profileError) {
+        if (profileError.code === 'PGRST116') {
+          console.log('Profile not found, creating...');
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              email: user.email || '',
+              full_name: user.user_metadata?.full_name || '',
+              role: 'user'
+            })
+            .select()
+            .single();
+
+          if (createError) {
+            console.error('Error creating profile:', createError);
+            toast.error('Ошибка создания профиля: ' + createError.message);
+            navigate('/');
+            return;
+          }
+
+          console.log('Profile created:', newProfile);
+          
+          if (newProfile.role !== 'admin') {
+            toast.error('У вас нет прав администратора');
+            navigate('/');
+            return;
+          }
+        } else {
+          console.error('Error fetching profile:', profileError);
+          toast.error('Ошибка проверки прав доступа: ' + profileError.message);
+          navigate('/');
+          return;
+        }
+      }
+      
+      if (profile?.role === 'admin') {
+        console.log('User is admin, setting access');
+        setIsAdmin(true);
+      } else {
+        console.log('User is not admin, role:', profile?.role);
+        toast.error('У вас нет прав администратора. Текущая роль: ' + (profile?.role || 'не определена'));
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error in checkAdminRole:', error);
+      toast.error('Ошибка проверки прав доступа');
+      navigate('/');
+    } finally {
+      setCheckingAdmin(false);
+      setAdminCheckCompleted(true);
+    }
+  }, [user, authLoading, navigate, adminCheckCompleted]);
+
+  useEffect(() => {
+    console.log('PostEditor useEffect - user:', user?.email, 'authLoading:', authLoading, 'adminCheckCompleted:', adminCheckCompleted);
+    checkAdminRole();
+  }, [checkAdminRole]);
+
+  useEffect(() => {
+    if (isEdit && id && isAdmin && !loading) {
       loadPost();
     }
-  }, [user, isEdit, id]);
+  }, [isEdit, id, isAdmin]);
 
   const loadPost = async () => {
     if (!id) return;
     
     setLoading(true);
     try {
-      // Загружаем статью по ID, а не по slug
       const { data: post, error } = await supabase
         .from('blog_posts')
         .select('*')
@@ -149,6 +230,23 @@ const PostEditor = () => {
       setLoading(false);
     }
   };
+
+  if (authLoading || checkingAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">
+            {authLoading ? 'Проверка авторизации...' : 'Проверка прав доступа...'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return null;
+  }
 
   if (loading && isEdit) {
     return (
