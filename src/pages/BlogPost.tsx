@@ -123,7 +123,7 @@ const BlogPost = () => {
 
           {/* Featured Image */}
           {post.featured_image && (
-            <div className="aspect-video mb-8 overflow-hidden rounded-lg">
+            <div className="aspect-video mb-8 overflow-hidden rounded-lg max-w-4xl mx-auto">
               <img
                 src={post.featured_image}
                 alt={post.title}
@@ -133,7 +133,7 @@ const BlogPost = () => {
           )}
 
           {/* Article Header */}
-          <header className="mb-8">
+          <header className="mb-8 max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               {post.title}
             </h1>
@@ -163,15 +163,15 @@ const BlogPost = () => {
           </header>
 
           {/* Article Content */}
-          <div className="max-w-none">
+          <div className="max-w-4xl mx-auto">
             <div 
-              className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-orange-500 prose-strong:text-gray-900 prose-blockquote:border-orange-500 prose-blockquote:text-gray-700 prose-video:w-full"
+              className="blog-content"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>
 
           {/* Article Footer */}
-          <footer className="mt-12 pt-8 border-t border-gray-200">
+          <footer className="mt-12 pt-8 border-t border-gray-200 max-w-4xl mx-auto">
             <div className="text-center">
               <Link to="/blog">
                 <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">

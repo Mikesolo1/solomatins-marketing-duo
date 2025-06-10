@@ -75,9 +75,9 @@ const Blog = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {posts.map((post) => (
-                  <Card key={post.id} className="hover:shadow-lg transition-shadow duration-300">
+                  <Card key={post.id} className="hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
                     {post.featured_image && (
-                      <div className="aspect-video overflow-hidden rounded-t-lg">
+                      <div className="aspect-[3/4] overflow-hidden rounded-t-lg">
                         <img
                           src={post.featured_image}
                           alt={post.title}
@@ -85,43 +85,45 @@ const Blog = () => {
                         />
                       </div>
                     )}
-                    <CardHeader>
-                      <h2 className="text-xl font-bold hover:text-orange-500 transition-colors">
-                        <Link to={`/blog/${post.slug}`}>
-                          {post.title}
-                        </Link>
-                      </h2>
-                      {post.excerpt && (
-                        <p className="text-gray-600 text-sm">
-                          {truncateText(post.excerpt, 120)}
-                        </p>
-                      )}
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-1">
-                            <Calendar size={14} />
-                            <span>{formatDate(post.created_at)}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Eye size={14} />
-                            <span>{post.views}</span>
-                          </div>
-                        </div>
-                        {post.profiles && (
-                          <div className="flex items-center gap-1">
-                            <User size={14} />
-                            <span>{post.profiles.full_name}</span>
-                          </div>
+                    <div className="flex flex-col flex-grow">
+                      <CardHeader className="flex-grow">
+                        <h2 className="text-xl font-bold hover:text-orange-500 transition-colors line-clamp-3">
+                          <Link to={`/blog/${post.slug}`}>
+                            {post.title}
+                          </Link>
+                        </h2>
+                        {post.excerpt && (
+                          <p className="text-gray-600 text-sm line-clamp-3">
+                            {truncateText(post.excerpt, 120)}
+                          </p>
                         )}
-                      </div>
-                      <Link to={`/blog/${post.slug}`}>
-                        <Button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-                          Читать далее
-                        </Button>
-                      </Link>
-                    </CardContent>
+                      </CardHeader>
+                      <CardContent className="mt-auto">
+                        <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1">
+                              <Calendar size={14} />
+                              <span>{formatDate(post.created_at)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Eye size={14} />
+                              <span>{post.views}</span>
+                            </div>
+                          </div>
+                          {post.profiles && (
+                            <div className="flex items-center gap-1">
+                              <User size={14} />
+                              <span className="truncate max-w-[100px]">{post.profiles.full_name}</span>
+                            </div>
+                          )}
+                        </div>
+                        <Link to={`/blog/${post.slug}`}>
+                          <Button className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+                            Читать далее
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </div>
                   </Card>
                 ))}
               </div>
